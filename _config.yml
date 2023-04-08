@@ -255,9 +255,9 @@ display_tags: ['formatting', 'images', 'links', 'math', 'code'] # this tags will
 
 scholar:
 
-  last_name: [Einstein]
-  first_name: [Albert, A.]
-
+  last_name: [Zhang, Z., ZHANG, Kairui]
+  first_name: [Kairui, ZHANG]
+  Chines_name: [张恺睿]
   style: apa
   locale: en
 

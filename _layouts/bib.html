@@ -29,7 +29,7 @@
         <!-- Entry bib key -->
         <div id="{{entry.key}}" class="col-sm-8">
         <!-- Title -->
-        <div class="title">{{entry.title}}</div>
+        <div class="title"><a href="https://doi.org/{{ entry.doi }}">{{entry.title}}</a></div>
         <!-- Author -->
         <div class="author">
         {% assign author_array_size = entry.author_array | size %}
@@ -46,6 +46,9 @@
             {%- if site.scholar.first_name contains author.first -%}
               {%- assign author_is_self = true -%}
             {%- endif -%}
+          {%- endif -%}
+          {%- if site.scholar.Chines_name contains author.last -%}
+            {%- assign author_is_self = true -%}
           {%- endif -%}
           {%- assign coauthor_url = nil -%}
           {%- if site.data.coauthors[author_last_name] -%}
