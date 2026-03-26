@@ -14,7 +14,7 @@ profile:
     <p></p>
 
 news: false # includes a list of news items
-selected_papers: false # includes a list of papers marked as "selected={true}"
+selected_papers: true # includes a list of papers marked as "selected={true}"
 social: true  # includes social icons at the bottom of the page
 ---
 
@@ -26,5 +26,5 @@ My name is Karry. Or, you may prefer to address me by my Chinese name, 张恺睿
 
 
 
-I am now a MSc student in University of Bristol. I am interested in Image Generation, Large Language Model and Reinforcement Learning. I believe that technology has the power to change the world for the better, and I want to be a part of that change.
+I am a second-year PhD student at the University of Bristol. My research focuses on multimodal learning, particularly audio-visual-language modeling and vision-language understanding.
 
