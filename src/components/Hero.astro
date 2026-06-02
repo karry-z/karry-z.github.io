@@ -2,59 +2,41 @@
 import CTAButton from "./CTAButton.astro";
 import { profile } from "../data/profile";
 import type { Lang } from "../data/nav";
+import { heroCopy } from "../data/copy";
 
 type Props = {
   lang: Lang;
 };
 
 const { lang } = Astro.props;
-const copy = {
-  en: {
-    name: profile.name,
-    research: "Audio-Visual-Language Learning · Interactive AI · Mechanistic Interpretability",
-    position: "I am a PhD student in Engineering Mathematics at the University of Bristol.",
-    body: "I study how multimodal models represent, align, and use information across vision, audio, and language. My current work focuses on benchmark design, controlled evaluation, and representation-level analysis.",
-    labPrefix: "I work in the",
-    labSuffix: "and am co-supervised by",
-    ctas: ["Featured projects", "Recent updates", "Benchmark discussions", "Download CV"]
-  },
-  zh: {
-    name: `${profile.name} · ${profile.chineseName}`,
-    research: "Audio-Visual-Language Learning · Interactive AI · Mechanistic Interpretability",
-    position: "我目前在 University of Bristol 攻读 Engineering Mathematics 博士。",
-    body: "我研究多模态模型如何表示、对齐并使用视觉、音频和语言信息。当前工作聚焦于 benchmark 设计、受控评估和表示层分析。",
-    labPrefix: "我的研究环境是",
-    labSuffix: "，由",
-    ctas: ["代表性项目", "近期更新", "Benchmark 讨论", "下载 CV"]
-  }
-}[lang];
+const copy = heroCopy[lang];
 ---
 
 <section class="hero">
   <div class="hero__content">
     <div class="hero__copy">
-      <h1>{copy.name}</h1>
+      <h1>{copy.displayName}</h1>
       <p class="hero__research">{copy.research}</p>
       <p class="hero__lead">{copy.position} {copy.body}</p>
       <p>
         {copy.labPrefix}{" "}
         <a href={profile.links.intelligentSystemsLab} target="_blank" rel="noopener noreferrer">Intelligent Systems Laboratory</a>
-        {lang === "en" ? " " : ""}
+        {" "}
         {copy.labSuffix}{" "}
         <a href={profile.links.zahraa} target="_blank" rel="noopener noreferrer">Zahraa S. Abdallah</a>
-        {lang === "en" ? " and " : " 和 "}
+        {copy.supervisorJoiner}
         <a href={profile.links.martha} target="_blank" rel="noopener noreferrer">Martha Lewis</a>
-        {lang === "en" ? "." : " 共同指导。"}
+        {copy.supervisorEnd}
       </p>
       <div class="button-row">
-        <CTAButton href="#featured-projects" label={copy.ctas[0]} variant="primary" />
-        <CTAButton href="#news" label={copy.ctas[1]} />
-        <CTAButton href="#benchmark-discussion" label={copy.ctas[2]} />
-        <CTAButton href={profile.cv.en} label={copy.ctas[3]} download />
+        <CTAButton href="#featured-projects" label={copy.ctas.featuredProjects} variant="primary" />
+        <CTAButton href="#news" label={copy.ctas.news} />
+        <CTAButton href="#benchmark-discussion" label={copy.ctas.benchmarkDiscussion} />
+        <CTAButton href={profile.cv.en} label={copy.ctas.cv} download />
       </div>
     </div>
     <figure class="hero__portrait">
-      <img src={profile.image} alt="Portrait of Kairui Zhang" loading="eager" />
+      <img src={profile.image} alt={copy.portraitAlt} loading="eager" />
     </figure>
   </div>
 </section>

@@ -3,22 +3,21 @@ import Hero from "../../components/Hero.astro";
 import NewsList from "../../components/NewsList.astro";
 import ProjectGrid from "../../components/ProjectGrid.astro";
 import Layout from "../../layouts/Layout.astro";
+import { homePageCopy } from "../../data/copy";
 import { news } from "../../data/news";
 import { profile } from "../../data/profile";
 import { projects } from "../../data/projects";
 
-const title = "Kairui Zhang 张恺睿 | audio-visual-language learning · interactive AI · Mechanistic Interpretability";
-const description =
-  "Kairui Zhang（张恺睿）是英国布里斯托大学博士生，研究 audio-visual-language learning、interactive AI、Mechanistic Interpretability、benchmark 设计、受控 VLM 评估和表示层分析。";
+const copy = homePageCopy.zh;
 ---
 
-<Layout title={title} description={description} lang="zh" pathname="/zh/">
+<Layout title={copy.title} description={copy.description} lang="zh" pathname="/zh/">
   <Hero lang="zh" />
 
   <section class="section section-band" id="featured-projects">
     <div class="section-heading">
-      <p class="eyebrow">当前工作</p>
-      <h2>代表性项目</h2>
+      <p class="eyebrow">{copy.featured.eyebrow}</p>
+      <h2>{copy.featured.title}</h2>
     </div>
     <ProjectGrid lang="zh" projects={projects} />
   </section>
@@ -26,8 +25,8 @@ const description =
   <section class="section" id="news" aria-labelledby="news-heading">
     <div>
       <div class="section-heading">
-        <p class="eyebrow">动态</p>
-        <h2 id="news-heading">近期更新</h2>
+        <p class="eyebrow">{copy.news.eyebrow}</p>
+        <h2 id="news-heading">{copy.news.title}</h2>
       </div>
       <NewsList lang="zh" items={news} />
     </div>
@@ -36,17 +35,17 @@ const description =
   <section class="section section-band" id="benchmark-discussion">
     <div class="discussion">
       <div>
-        <p class="eyebrow">Benchmark 相关讨论</p>
-        <h2>聚焦的 benchmark 设计问题</h2>
+        <p class="eyebrow">{copy.benchmarkDiscussion.eyebrow}</p>
+        <h2>{copy.benchmarkDiscussion.title}</h2>
       </div>
       <div>
         <p>
-          目前我更希望讨论聚焦的 benchmark 设计问题，尤其是能把行为层面的失败模式和表示层面的证据联系起来的多模态评估设置。
+          {copy.benchmarkDiscussion.body}
         </p>
         <div class="button-row">
-          <a class="button button--primary" href={`mailto:${profile.email}`}>Email</a>
-          <a class="button" href={profile.links.googleScholar} target="_blank" rel="noopener noreferrer">Google Scholar</a>
-          <a class="button" href={profile.links.github} target="_blank" rel="noopener noreferrer">GitHub</a>
+          <a class="button button--primary" href={`mailto:${profile.email}`}>{copy.benchmarkDiscussion.links.email}</a>
+          <a class="button" href={profile.links.googleScholar} target="_blank" rel="noopener noreferrer">{copy.benchmarkDiscussion.links.googleScholar}</a>
+          <a class="button" href={profile.links.github} target="_blank" rel="noopener noreferrer">{copy.benchmarkDiscussion.links.github}</a>
         </div>
       </div>
     </div>

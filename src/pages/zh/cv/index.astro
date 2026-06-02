@@ -2,20 +2,20 @@
 import CTAButton from "../../../components/CTAButton.astro";
 import PDFPreview from "../../../components/PDFPreview.astro";
 import Layout from "../../../layouts/Layout.astro";
+import { cvPageCopy } from "../../../data/copy";
 import { profile } from "../../../data/profile";
 
-const title = "CV | Kairui Zhang 张恺睿";
-const description = "Kairui Zhang（张恺睿）的英文 CV 页面。";
+const copy = cvPageCopy.zh;
 ---
 
-<Layout title={title} description={description} lang="zh" pathname="/zh/cv/">
+<Layout title={copy.title} description={copy.description} lang="zh" pathname="/zh/cv/">
   <section class="page-hero">
-    <p class="eyebrow">CV</p>
-    <h1>CV</h1>
-    <p>这里只保留英文 CV PDF。</p>
+    <p class="eyebrow">{copy.hero.eyebrow}</p>
+    <h1>{copy.hero.title}</h1>
+    <p>{copy.hero.body}</p>
     <div class="button-row">
-      <CTAButton href={profile.cv.en} label="下载英文 CV PDF" variant="primary" download />
+      <CTAButton href={profile.cv.en} label={copy.downloadLabel} variant="primary" download />
     </div>
   </section>
-  <PDFPreview src={profile.cv.en} title="下载英文 CV" fallback="如果浏览器不能显示 PDF，请使用下载链接。" />
+  <PDFPreview src={profile.cv.en} title={copy.previewTitle} fallback={copy.previewFallback} />
 </Layout>

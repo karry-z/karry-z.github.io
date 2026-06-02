@@ -1,6 +1,7 @@
 ---
 import { profile } from "../data/profile";
 import { localizedPath, type Lang } from "../data/nav";
+import { seoMetadata } from "../data/copy";
 
 type Props = {
   title: string;
@@ -15,17 +16,7 @@ const alternateLang = lang === "en" ? "zh" : "en";
 const alternatePath = localizedPath(pathname, alternateLang);
 const alternateUrl = new URL(alternatePath, profile.links.homepage).toString();
 const ogImage = new URL(profile.image, profile.links.homepage).toString();
-const keywords = [
-  "Kairui Zhang",
-  "张恺睿",
-  "multimodal mechanistic interpretability",
-  "audio-visual-language modeling",
-  "vision-language evaluation",
-  "sparse autoencoders",
-  "SAE",
-  "University of Bristol",
-  "benchmark design"
-].join(", ");
+const keywords = seoMetadata.keywords.join(", ");
 
 const personJsonLd = {
   "@context": "https://schema.org",
@@ -46,15 +37,7 @@ const personJsonLd = {
     profile.links.bristolProfile,
     profile.links.homepage
   ],
-  knowsAbout: [
-    "audio-visual-language learning",
-    "interactive AI",
-    "Mechanistic Interpretability",
-    "audio-visual-language modeling",
-    "vision-language evaluation",
-    "sparse autoencoders",
-    "benchmark design"
-  ]
+  knowsAbout: seoMetadata.knowsAbout
 };
 ---
 

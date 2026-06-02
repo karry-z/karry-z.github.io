@@ -2,6 +2,7 @@
 import ProjectCard from "./ProjectCard.astro";
 import type { Lang } from "../data/nav";
 import type { Project } from "../data/projects";
+import { categoryCopy, projectListCopy } from "../data/copy";
 
 type Props = {
   lang: Lang;
@@ -10,25 +11,19 @@ type Props = {
 };
 
 const { lang, projects, filters = false } = Astro.props;
-const filterLabels = {
-  en: [
-    ["all", "All"],
-    ["benchmark", "Benchmark"],
-    ["evaluation", "Evaluation"],
-    ["interpretability", "Interpretability"]
-  ],
-  zh: [
-    ["all", "全部"],
-    ["benchmark", "Benchmark"],
-    ["evaluation", "评估"],
-    ["interpretability", "可解释性"]
-  ]
-}[lang];
+const categoryLabels = categoryCopy[lang];
+const copy = projectListCopy[lang];
+const filterLabels = [
+  ["all", categoryLabels.all],
+  ["benchmark", categoryLabels.benchmark],
+  ["evaluation", categoryLabels.evaluation],
+  ["interpretability", categoryLabels.interpretability]
+];
 ---
 
 <div class="project-grid-wrap" data-project-grid>
   {filters && (
-    <div class="filter-bar" aria-label={lang === "en" ? "Project filters" : "项目筛选"}>
+    <div class="filter-bar" aria-label={copy.filtersLabel}>
       {filterLabels.map(([value, label], index) => (
         <button type="button" class:list={["filter-button", index === 0 && "is-active"]} data-project-filter={value} aria-pressed={index === 0 ? "true" : "false"}>
           {label}

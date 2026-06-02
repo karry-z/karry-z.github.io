@@ -1,6 +1,7 @@
 ---
 import type { Lang } from "../data/nav";
 import type { Project } from "../data/projects";
+import { projectListCopy } from "../data/copy";
 
 type Props = {
   project: Project;
@@ -8,6 +9,7 @@ type Props = {
 };
 
 const { project, lang } = Astro.props;
+const copy = projectListCopy[lang];
 ---
 
 <article class="project-card" data-project-card data-project-id={project.id} data-category={project.category}>
@@ -26,7 +28,7 @@ const { project, lang } = Astro.props;
     <p class="project-question">{project.question[lang]}</p>
     <p>{project.summary[lang]}</p>
     {project.caveat && <p class="claim-note">{project.caveat[lang]}</p>}
-    <div class="chip-row project-card__tags" aria-label={lang === "en" ? "Project tags" : "项目标签"}>
+    <div class="chip-row project-card__tags" aria-label={copy.tagsLabel}>
       {project.chips[lang].map((chip) => <span class="chip">{chip}</span>)}
     </div>
     <div class="text-link-row">
