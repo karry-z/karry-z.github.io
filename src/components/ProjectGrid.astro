@@ -1,0 +1,65 @@
+---
+import ProjectCard from "./ProjectCard.astro";
+import type { Lang } from "../data/nav";
+import type { Project } from "../data/projects";
+
+type Props = {
+  lang: Lang;
+  projects: Project[];
+  filters?: boolean;
+};
+
+const { lang, projects, filters = false } = Astro.props;
+const filterLabels = {
+  en: [
+    ["all", "All"],
+    ["benchmark", "Benchmark"],
+    ["evaluation", "Evaluation"],
+    ["interpretability", "Interpretability"]
+  ],
+  zh: [
+    ["all", "全部"],
+    ["benchmark", "Benchmark"],
+    ["evaluation", "评估"],
+    ["interpretability", "可解释性"]
+  ]
+}[lang];
+---
+
+<div class="project-grid-wrap" data-project-grid>
+  {filters && (
+    <div class="filter-bar" aria-label={lang === "en" ? "Project filters" : "项目筛选"}>
+      {filterLabels.map(([value, label], index) => (
+        <button type="button" class:list={["filter-button", index === 0 && "is-active"]} data-project-filter={value} aria-pressed={index === 0 ? "true" : "false"}>
+          {label}
+        </button>
+      ))}
+    </div>
+  )}
+  <div class="project-grid">
+    {projects.map((project) => <ProjectCard project={project} lang={lang} />)}
+  </div>
+</div>
+
+<script is:inline>
+  document.querySelectorAll("[data-project-grid]").forEach((grid) => {
+    const buttons = Array.from(grid.querySelectorAll("[data-project-filter]"));
+    const cards = Array.from(grid.querySelectorAll("[data-project-card]"));
+    if (!buttons.length) return;
+
+    buttons.forEach((button) => {
+      button.addEventListener("click", () => {
+        const filter = button.getAttribute("data-project-filter");
+        buttons.forEach((item) => {
+          const active = item === button;
+          item.classList.toggle("is-active", active);
+          item.setAttribute("aria-pressed", String(active));
+        });
+        cards.forEach((card) => {
+          const show = filter === "all" || card.getAttribute("data-category") === filter;
+          card.hidden = !show;
+        });
+      });
+    });
+  });
+</script>

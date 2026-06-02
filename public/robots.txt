@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://karry-z.github.io/sitemap-index.xml

@@ -1,0 +1,20 @@
+{
+  "name": "karry-z.github.io",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "astro dev",
+    "build": "astro check && astro build",
+    "preview": "astro preview",
+    "check": "astro check"
+  },
+  "overrides": {
+    "rollup": "npm:@rollup/wasm-node@4.61.0"
+  },
+  "devDependencies": {
+    "@astrojs/check": "^0.9.9",
+    "astro": "^6.4.2",
+    "typescript": "^6.0.3"
+  }
+}

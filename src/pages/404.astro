@@ -1,0 +1,18 @@
+---
+import Layout from "../layouts/Layout.astro";
+
+const title = "404 | Kairui Zhang";
+const description = "Page not found.";
+---
+
+<Layout title={title} description={description} lang="en" pathname="/404.html">
+  <section class="page-hero">
+    <p class="eyebrow">404</p>
+    <h1>Page not found</h1>
+    <p>页面不存在。</p>
+    <div class="button-row">
+      <a class="button button--primary" href="/">Home</a>
+      <a class="button" href="/zh/">中文首页</a>
+    </div>
+  </section>
+</Layout>

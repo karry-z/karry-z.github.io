@@ -1,0 +1,38 @@
+---
+import type { Lang } from "../data/nav";
+import type { Project } from "../data/projects";
+
+type Props = {
+  project: Project;
+  lang: Lang;
+};
+
+const { project, lang } = Astro.props;
+---
+
+<article class="project-card" data-project-card data-project-id={project.id} data-category={project.category}>
+  <a
+    class="project-card__media-link"
+    href={project.primaryHref}
+    target="_blank"
+    rel="noopener noreferrer"
+    aria-label={`${project.primaryLabel}: ${project.title}`}
+  >
+    <img class="project-card__thumb" src={project.thumbnail} alt={project.alt} loading="lazy" />
+  </a>
+  <div class="project-card__body">
+    <p class="project-card__meta">{project.status}</p>
+    <h3>{project.title}</h3>
+    <p class="project-question">{project.question[lang]}</p>
+    <p>{project.summary[lang]}</p>
+    {project.caveat && <p class="claim-note">{project.caveat[lang]}</p>}
+    <div class="chip-row project-card__tags" aria-label={lang === "en" ? "Project tags" : "项目标签"}>
+      {project.chips[lang].map((chip) => <span class="chip">{chip}</span>)}
+    </div>
+    <div class="text-link-row">
+      {project.resourceLinks.map((link) => (
+        <a href={link.href} target="_blank" rel="noopener noreferrer">{link.label}</a>
+      ))}
+    </div>
+  </div>
+</article>

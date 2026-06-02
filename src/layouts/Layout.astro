@@ -1,0 +1,31 @@
+---
+import BaseHead from "../components/BaseHead.astro";
+import Header from "../components/Header.astro";
+import Footer from "../components/Footer.astro";
+import type { Lang } from "../data/nav";
+import "../styles/global.css";
+
+type Props = {
+  title: string;
+  description: string;
+  lang: Lang;
+  pathname: string;
+};
+
+const { title, description, lang, pathname } = Astro.props;
+---
+
+<!doctype html>
+<html lang={lang}>
+  <head>
+    <BaseHead title={title} description={description} lang={lang} pathname={pathname} />
+  </head>
+  <body>
+    <a class="skip-link" href="#main">{lang === "en" ? "Skip to main content" : "跳到主要内容"}</a>
+    <Header lang={lang} currentPath={pathname} />
+    <main id="main">
+      <slot />
+    </main>
+    <Footer lang={lang} />
+  </body>
+</html>

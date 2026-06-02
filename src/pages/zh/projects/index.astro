@@ -1,0 +1,20 @@
+---
+import WorkList from "../../../components/WorkList.astro";
+import Layout from "../../../layouts/Layout.astro";
+import { works } from "../../../data/works";
+
+const title = "项目 | Kairui Zhang 张恺睿";
+const description =
+  "Kairui Zhang（张恺睿）的项目和对应论文，支持搜索、筛选和排序。";
+---
+
+<Layout title={title} description={description} lang="zh" pathname="/zh/projects/">
+  <section class="page-hero">
+    <p class="eyebrow">项目</p>
+    <h1>项目</h1>
+    <p>项目和对应论文放在同一个列表里；每条保留项目背景、publication status、作者和资源链接。</p>
+  </section>
+  <section class="section section--compact">
+    <WorkList lang="zh" works={works} />
+  </section>
+</Layout>

@@ -1,0 +1,20 @@
+---
+import WorkList from "../../components/WorkList.astro";
+import Layout from "../../layouts/Layout.astro";
+import { works } from "../../data/works";
+
+const title = "Projects | Kairui Zhang";
+const description =
+  "Projects and related publications by Kairui Zhang, with searchable and sortable entries for benchmarks, evaluation, interpretability, and control work.";
+---
+
+<Layout title={title} description={description} lang="en" pathname="/projects/">
+  <section class="page-hero">
+    <p class="eyebrow">Projects</p>
+    <h1>Projects</h1>
+    <p>Projects and related publications in one list. Each entry keeps the project context, publication status, authors, and resource links together.</p>
+  </section>
+  <section class="section section--compact">
+    <WorkList lang="en" works={works} />
+  </section>
+</Layout>

@@ -1,0 +1,21 @@
+---
+import CTAButton from "../../components/CTAButton.astro";
+import PDFPreview from "../../components/PDFPreview.astro";
+import Layout from "../../layouts/Layout.astro";
+import { profile } from "../../data/profile";
+
+const title = "CV | Kairui Zhang";
+const description = "English CV page for Kairui Zhang, PhD student at the University of Bristol.";
+---
+
+<Layout title={title} description={description} lang="en" pathname="/cv/">
+  <section class="page-hero">
+    <p class="eyebrow">CV</p>
+    <h1>CV</h1>
+    <p>The English PDF is the canonical CV.</p>
+    <div class="button-row">
+      <CTAButton href={profile.cv.en} label="Download English CV PDF" variant="primary" download />
+    </div>
+  </section>
+  <PDFPreview src={profile.cv.en} title="Download the English CV" fallback="Your browser cannot display the PDF." />
+</Layout>
