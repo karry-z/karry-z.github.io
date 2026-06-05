@@ -1,18 +1,5 @@
 ---
-import Layout from "../layouts/Layout.astro";
-import { notFoundPageCopy } from "../data/copy";
-
-const copy = notFoundPageCopy;
+import NotFoundPage from "../components/not-found/NotFoundPage.astro";
 ---
 
-<Layout title={copy.title} description={copy.description} lang="en" pathname="/404.html">
-  <section class="page-hero">
-    <p class="eyebrow">404</p>
-    <h1>{copy.heroTitle}</h1>
-    <p>{copy.body}</p>
-    <div class="button-row">
-      <a class="button button--primary" href="/">{copy.homeLabel}</a>
-      <a class="button" href="/zh/">{copy.zhHomeLabel}</a>
-    </div>
-  </section>
-</Layout>
+<NotFoundPage locale="en" pathname="/404.html" />

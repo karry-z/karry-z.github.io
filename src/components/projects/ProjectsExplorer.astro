@@ -1,0 +1,410 @@
+---
+import type { ProjectFilterKey, ProjectsControls } from "./projectsConfig";
+
+type ProjectCategory = Exclude<ProjectFilterKey, "all">;
+
+export type ProjectExplorerItem = {
+  title: string;
+  categories: ProjectCategory[];
+  year: number;
+  description: string;
+  venue?: string;
+  imagePath?: string;
+  imageAlt?: string;
+  keywords: string[];
+  href?: string;
+};
+
+type Props = {
+  controls: ProjectsControls;
+  projects: ProjectExplorerItem[];
+};
+
+const { controls, projects } = Astro.props;
+---
+
+<div class="projects-explorer" data-projects-explorer>
+  <div class="projects-explorer__controls">
+    <label class="projects-explorer__search">
+      <span>{controls.searchLabel}</span>
+      <input type="search" placeholder={controls.searchPlaceholder} data-project-search />
+    </label>
+
+    <div class="projects-explorer__filters" role="group" aria-label={controls.filtersLabel}>
+      {controls.filters.map((filter, index) => (
+        <button type="button" class:list={["projects-explorer__filter", index === 0 && "is-active"]} data-project-filter={filter.value} aria-pressed={index === 0 ? "true" : "false"}>
+          {filter.label}
+        </button>
+      ))}
+    </div>
+
+    <div class="projects-explorer__mode" role="group" aria-label={controls.filterModeLabel}>
+      <span>{controls.filterModeLabel}</span>
+      <div class="projects-explorer__mode-buttons">
+        {controls.filterModes.map((mode, index) => (
+          <button type="button" class:list={["projects-explorer__mode-button", index === 0 && "is-active"]} data-project-filter-mode={mode.value} aria-pressed={index === 0 ? "true" : "false"}>
+            {mode.label}
+          </button>
+        ))}
+      </div>
+    </div>
+
+    <label class="projects-explorer__sort">
+      <span>{controls.sortLabel}</span>
+      <select data-project-sort>
+        {controls.sortOptions.map((option) => (
+          <option value={option.value}>{option.label}</option>
+        ))}
+      </select>
+    </label>
+  </div>
+
+  <div class="projects-explorer__list" data-project-items>
+    {projects.map((project) => {
+      const searchText = [
+        project.title,
+        project.description,
+        project.venue ?? "",
+        ...project.categories,
+        String(project.year),
+        ...project.keywords
+      ].join(" ");
+
+      return (
+        <article
+          class="projects-explorer__item"
+          data-project-item
+          data-categories={JSON.stringify(project.categories)}
+          data-year={project.year}
+          data-title={project.title.toLocaleLowerCase()}
+          data-search={searchText.toLocaleLowerCase()}
+        >
+          {project.imagePath && (
+            project.href ? (
+              <a class="projects-explorer__media" href={project.href} target="_blank" rel="noopener noreferrer" aria-label={project.title}>
+                <img src={project.imagePath} alt={project.imageAlt ?? ""} loading="lazy" />
+              </a>
+            ) : (
+              <div class="projects-explorer__media">
+                <img src={project.imagePath} alt={project.imageAlt ?? ""} loading="lazy" />
+              </div>
+            )
+          )}
+
+          <div class="projects-explorer__body">
+            <p class="projects-explorer__meta">{project.year}{project.venue ? ` · ${project.venue}` : ""}</p>
+            <h2>
+              {project.href ? (
+                <a href={project.href} target="_blank" rel="noopener noreferrer">{project.title}</a>
+              ) : (
+                project.title
+              )}
+            </h2>
+            <p>{project.description}</p>
+            <div class="projects-explorer__keywords">
+              {project.keywords.map((keyword) => <span>{keyword}</span>)}
+            </div>
+          </div>
+        </article>
+      );
+    })}
+  </div>
+
+  <p class="projects-explorer__empty" data-project-empty hidden>{controls.noResults}</p>
+</div>
+
+<script is:inline>
+  document.querySelectorAll("[data-projects-explorer]").forEach((wrap) => {
+    const search = wrap.querySelector("[data-project-search]");
+    const sort = wrap.querySelector("[data-project-sort]");
+    const filters = Array.from(wrap.querySelectorAll("[data-project-filter]"));
+    const filterModes = Array.from(wrap.querySelectorAll("[data-project-filter-mode]"));
+    const list = wrap.querySelector("[data-project-items]");
+    const empty = wrap.querySelector("[data-project-empty]");
+    const items = Array.from(wrap.querySelectorAll("[data-project-item]"));
+    const activeFilters = new Set();
+    let filterMode = "or";
+
+    function syncFilterButtons() {
+      filters.forEach((filter) => {
+        const value = filter.getAttribute("data-project-filter") || "all";
+        const active = value === "all" ? activeFilters.size === 0 : activeFilters.has(value);
+        filter.classList.toggle("is-active", active);
+        filter.setAttribute("aria-pressed", String(active));
+      });
+    }
+
+    function syncFilterModeButtons() {
+      filterModes.forEach((button) => {
+        const active = button.getAttribute("data-project-filter-mode") === filterMode;
+        button.classList.toggle("is-active", active);
+        button.setAttribute("aria-pressed", String(active));
+      });
+    }
+
+    function applyState() {
+      const query = (search?.value || "").trim().toLowerCase();
+      const sortMode = sort?.value || "newest";
+      const ordered = [...items].sort((a, b) => {
+        if (sortMode === "oldest") return Number(a.dataset.year) - Number(b.dataset.year);
+        if (sortMode === "title") return (a.dataset.title || "").localeCompare(b.dataset.title || "");
+        return Number(b.dataset.year) - Number(a.dataset.year);
+      });
+
+      ordered.forEach((item) => list?.append(item));
+
+      let visibleCount = 0;
+      items.forEach((item) => {
+        const itemCategories = JSON.parse(item.dataset.categories || "[]");
+        const categoryMatch =
+          activeFilters.size === 0 ||
+          (filterMode === "and"
+            ? [...activeFilters].every((filter) => itemCategories.includes(filter))
+            : itemCategories.some((category) => activeFilters.has(category)));
+        const searchMatch = !query || (item.dataset.search || "").includes(query);
+        const visible = categoryMatch && searchMatch;
+        item.hidden = !visible;
+        if (visible) visibleCount += 1;
+      });
+
+      if (empty) empty.hidden = visibleCount !== 0;
+    }
+
+    filters.forEach((filter) => {
+      filter.addEventListener("click", () => {
+        const value = filter.getAttribute("data-project-filter") || "all";
+        if (value === "all") {
+          activeFilters.clear();
+        } else if (activeFilters.has(value)) {
+          activeFilters.delete(value);
+        } else {
+          activeFilters.add(value);
+        }
+
+        syncFilterButtons();
+        applyState();
+      });
+    });
+
+    filterModes.forEach((button) => {
+      button.addEventListener("click", () => {
+        filterMode = button.getAttribute("data-project-filter-mode") || "or";
+        syncFilterModeButtons();
+        applyState();
+      });
+    });
+
+    search?.addEventListener("input", applyState);
+    search?.addEventListener("search", applyState);
+    search?.addEventListener("change", applyState);
+    sort?.addEventListener("change", applyState);
+    syncFilterButtons();
+    syncFilterModeButtons();
+    applyState();
+  });
+</script>
+
+<style>
+  .projects-explorer {
+    width: min(100% - 2rem, var(--max-width, 1160px));
+    margin: 0 auto;
+    padding: 2rem 0 4rem;
+  }
+
+  .projects-explorer__controls {
+    display: grid;
+    grid-template-areas:
+      "search mode sort"
+      "filters filters filters";
+    grid-template-columns: minmax(220px, 1fr) auto auto;
+    align-items: end;
+    gap: 0.9rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .projects-explorer__search {
+    grid-area: search;
+  }
+
+  .projects-explorer__mode {
+    grid-area: mode;
+  }
+
+  .projects-explorer__sort {
+    grid-area: sort;
+  }
+
+  .projects-explorer__search,
+  .projects-explorer__mode,
+  .projects-explorer__sort {
+    display: grid;
+    gap: 0.35rem;
+    color: var(--muted, #6b7280);
+    font-size: 0.9rem;
+    font-weight: 650;
+  }
+
+  .projects-explorer__search input,
+  .projects-explorer__sort select {
+    min-height: 2.45rem;
+    border: 1px solid var(--line, #e5e7eb);
+    border-radius: 8px;
+    background: #ffffff;
+    color: var(--text, #111827);
+    padding: 0.45rem 0.65rem;
+  }
+
+  .projects-explorer__filters {
+    grid-area: filters;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.45rem;
+  }
+
+  .projects-explorer__filter {
+    min-height: 2.45rem;
+    border: 1px solid var(--line, #e5e7eb);
+    border-radius: 999px;
+    background: #ffffff;
+    color: var(--text, #111827);
+    padding: 0.42rem 0.75rem;
+    cursor: pointer;
+  }
+
+  .projects-explorer__mode-buttons {
+    display: inline-flex;
+    min-height: 2.45rem;
+    border: 1px solid var(--line, #e5e7eb);
+    border-radius: 8px;
+    background: #ffffff;
+    overflow: hidden;
+  }
+
+  .projects-explorer__mode-button {
+    border: 0;
+    border-right: 1px solid var(--line, #e5e7eb);
+    background: transparent;
+    color: var(--text, #111827);
+    padding: 0.42rem 0.65rem;
+    cursor: pointer;
+  }
+
+  .projects-explorer__mode-button:last-child {
+    border-right: 0;
+  }
+
+  .projects-explorer__filter:hover,
+  .projects-explorer__filter:focus-visible,
+  .projects-explorer__filter.is-active,
+  .projects-explorer__mode-button:hover,
+  .projects-explorer__mode-button:focus-visible,
+  .projects-explorer__mode-button.is-active {
+    border-color: var(--accent, #2563eb);
+    background: var(--accent-soft, #eff6ff);
+    color: var(--accent-dark, #1d4ed8);
+  }
+
+  .projects-explorer__list {
+    display: grid;
+    gap: 1rem;
+  }
+
+  .projects-explorer__item {
+    display: grid;
+    grid-template-columns: minmax(140px, 0.28fr) minmax(0, 1fr);
+    gap: 1rem;
+    border: 1px solid var(--line, #e5e7eb);
+    border-radius: 8px;
+    background: #ffffff;
+    padding: 1rem;
+    transition:
+      border-color 160ms ease,
+      box-shadow 160ms ease,
+      transform 160ms ease;
+  }
+
+  .projects-explorer__item:hover,
+  .projects-explorer__item:focus-within {
+    border-color: rgba(37, 99, 235, 0.42);
+    box-shadow: var(--shadow-card, 0 10px 30px rgba(15, 23, 42, 0.06));
+    transform: translateY(-1px);
+  }
+
+  .projects-explorer__item[hidden] {
+    display: none;
+  }
+
+  .projects-explorer__media {
+    display: block;
+    border-radius: 6px;
+    background: var(--bg-soft, #f8fafc);
+    overflow: hidden;
+  }
+
+  .projects-explorer__media img {
+    width: 100%;
+    aspect-ratio: 4 / 3;
+    object-fit: contain;
+    object-position: center;
+    transition: transform 180ms ease;
+  }
+
+  .projects-explorer__item:hover .projects-explorer__media img,
+  .projects-explorer__item:focus-within .projects-explorer__media img {
+    transform: scale(1.025);
+  }
+
+  .projects-explorer__body h2 {
+    margin-bottom: 0.35rem;
+    font-size: 1.2rem;
+  }
+
+  .projects-explorer__body h2 a {
+    color: inherit;
+    text-decoration: none;
+  }
+
+  .projects-explorer__body h2 a:hover,
+  .projects-explorer__body h2 a:focus-visible {
+    color: var(--accent-dark, #1d4ed8);
+  }
+
+  .projects-explorer__meta {
+    margin-bottom: 0.35rem;
+    color: var(--muted, #6b7280);
+    font-size: 0.9rem;
+  }
+
+  .projects-explorer__keywords {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+  }
+
+  .projects-explorer__keywords span {
+    border: 1px solid var(--line, #e5e7eb);
+    border-radius: 999px;
+    color: var(--muted, #6b7280);
+    padding: 0.18rem 0.55rem;
+    font-size: 0.85rem;
+  }
+
+  .projects-explorer__empty {
+    color: var(--muted, #6b7280);
+  }
+
+  @media (max-width: 820px) {
+    .projects-explorer__controls {
+      grid-template-areas:
+        "search"
+        "filters"
+        "mode"
+        "sort";
+      grid-template-columns: 1fr;
+    }
+
+    .projects-explorer__item {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

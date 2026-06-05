@@ -1,0 +1,35 @@
+---
+type Props = {
+  pdfPath: string;
+  title: string;
+  fallbackText: string;
+};
+
+const { pdfPath, title, fallbackText } = Astro.props;
+---
+
+<section class="cv-pdf-viewer" aria-label={title}>
+  <object class="cv-pdf-viewer__object" data={pdfPath} type="application/pdf" aria-label={title}>
+    <p>
+      {fallbackText}
+    </p>
+  </object>
+</section>
+
+<style>
+  .cv-pdf-viewer {
+    width: min(100% - 2rem, var(--max-width, 1160px));
+    margin: 0 auto;
+    padding: 1.5rem 0 3rem;
+  }
+
+  .cv-pdf-viewer__object {
+    display: block;
+    width: 100%;
+    min-height: calc(100svh - var(--site-header-height, 72px) - 4.5rem);
+    border: 1px solid var(--line, #e5e7eb);
+    border-radius: 8px;
+    background: var(--bg-soft, #f8fafc);
+  }
+
+</style>

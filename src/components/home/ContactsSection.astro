@@ -1,0 +1,75 @@
+---
+import type { ContactsContent } from "../../content";
+
+type Props = {
+  title: string;
+  contacts: ContactsContent;
+};
+
+const { title, contacts } = Astro.props;
+---
+
+<div class="contacts-section">
+  <div>
+    <h2>{title}</h2>
+    <div class="contacts-section__description" set:html={contacts.description} />
+  </div>
+
+  <div class="contacts-section__links">
+    {contacts.socialLinks.map((link) => (
+      <a class="contacts-section__link" href={link.href} target={link.href.startsWith("mailto:") ? undefined : "_blank"} rel={link.href.startsWith("mailto:") ? undefined : "noopener noreferrer"}>
+        {link.icon && <img src={link.icon} alt="" aria-hidden="true" loading="lazy" />}
+        <span>{link.label}</span>
+      </a>
+    ))}
+  </div>
+</div>
+
+<style>
+  .contacts-section {
+    display: grid;
+    grid-template-columns: minmax(0, 0.9fr) minmax(260px, 0.7fr);
+    align-items: start;
+    gap: 3rem;
+  }
+
+  .contacts-section__description {
+    max-width: 620px;
+    font-size: 1.05rem;
+  }
+
+  .contacts-section__links {
+    display: grid;
+    gap: 0.75rem;
+  }
+
+  .contacts-section__link {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    border: 1px solid var(--line, #e5e7eb);
+    border-radius: 8px;
+    background: #ffffff;
+    color: var(--text, #111827);
+    padding: 0.85rem 1rem;
+    text-decoration: none;
+  }
+
+  .contacts-section__link:hover,
+  .contacts-section__link:focus-visible {
+    border-color: var(--accent, #2563eb);
+    color: var(--accent-dark, #1d4ed8);
+  }
+
+  .contacts-section__link img {
+    width: 1.25rem;
+    height: 1.25rem;
+  }
+
+  @media (max-width: 760px) {
+    .contacts-section {
+      grid-template-columns: 1fr;
+      gap: 1.5rem;
+    }
+  }
+</style>

@@ -1,0 +1,170 @@
+---
+import type { Locale } from "../../i18n";
+import { getHomeContent, getSelectedProjects } from "../../content";
+import SiteLayout from "../site/SiteLayout.astro";
+import AboutSection from "./AboutSection.astro";
+import ContactsSection from "./ContactsSection.astro";
+import { getHomeConfig } from "./homeConfig";
+import HomeSection from "./HomeSection.astro";
+import HomeSectionNav from "./HomeSectionNav.astro";
+import NewsSection from "./NewsSection.astro";
+import SelectedProjectsSection from "./SelectedProjectsSection.astro";
+
+type Props = {
+  locale: Locale;
+  pathname: string;
+};
+
+const { locale, pathname } = Astro.props;
+const content = getHomeContent(locale);
+const selectedProjects = getSelectedProjects(locale);
+const homeConfig = getHomeConfig(locale);
+const title = `${content.about.name} | ${content.about.researchInterests[0]}`;
+const description = content.about.description.replace(/<[^>]*>/g, "");
+---
+
+<SiteLayout title={title} description={description} locale={locale} pageKey="home" pathname={pathname}>
+  <div class="home-page" data-home-page>
+    <HomeSection
+      id={homeConfig.sectionIds.about}
+      label={homeConfig.sectionLabels.about}
+      background={homeConfig.sectionBackgrounds.about}
+    >
+      <AboutSection about={content.about} />
+    </HomeSection>
+
+    <HomeSection
+      id={homeConfig.sectionIds.selectedProjects}
+      label={homeConfig.sectionLabels.selectedProjects}
+      background={homeConfig.sectionBackgrounds.selectedProjects}
+    >
+      <SelectedProjectsSection title={homeConfig.sectionLabels.selectedProjects} projects={selectedProjects} />
+    </HomeSection>
+
+    <HomeSection
+      id={homeConfig.sectionIds.news}
+      label={homeConfig.sectionLabels.news}
+      background={homeConfig.sectionBackgrounds.news}
+    >
+      <NewsSection title={homeConfig.sectionLabels.news} items={content.news} />
+    </HomeSection>
+
+    <HomeSection
+      id={homeConfig.sectionIds.contacts}
+      label={homeConfig.sectionLabels.contacts}
+      background={homeConfig.sectionBackgrounds.contacts}
+    >
+      <ContactsSection title={homeConfig.sectionLabels.contacts} contacts={content.contacts} />
+    </HomeSection>
+
+    <HomeSectionNav homeConfig={homeConfig} />
+  </div>
+</SiteLayout>
+
+<script is:inline>
+  document.documentElement.classList.add("home-scroll-snap-enabled");
+
+  (() => {
+    const desktopQuery = window.matchMedia("(min-width: 721px)");
+    const reduceMotionQuery = window.matchMedia("(prefers-reduced-motion: reduce)");
+    const sections = Array.from(document.querySelectorAll("[data-home-section]"));
+    if (sections.length < 2) return;
+
+    let activeIndex = 0;
+    let isAnimating = false;
+    let unlockTimer = 0;
+
+    function getNearestSectionIndex() {
+      const viewportCenter = window.scrollY + window.innerHeight / 2;
+      return sections.reduce((nearestIndex, section, index) => {
+        const currentDistance = Math.abs(section.offsetTop + section.offsetHeight / 2 - viewportCenter);
+        const nearestSection = sections[nearestIndex];
+        const nearestDistance = Math.abs(nearestSection.offsetTop + nearestSection.offsetHeight / 2 - viewportCenter);
+        return currentDistance < nearestDistance ? index : nearestIndex;
+      }, 0);
+    }
+
+    function unlockAfterScroll() {
+      window.clearTimeout(unlockTimer);
+      unlockTimer = window.setTimeout(() => {
+        isAnimating = false;
+      }, reduceMotionQuery.matches ? 120 : 820);
+    }
+
+    function scrollToSection(index) {
+      activeIndex = Math.max(0, Math.min(index, sections.length - 1));
+      isAnimating = true;
+      window.scrollTo({
+        top: sections[activeIndex].offsetTop,
+        behavior: reduceMotionQuery.matches ? "auto" : "smooth",
+      });
+      unlockAfterScroll();
+    }
+
+    window.addEventListener(
+      "wheel",
+      (event) => {
+        if (!desktopQuery.matches) return;
+        if (event.ctrlKey || event.metaKey || event.altKey || event.shiftKey) return;
+        if (Math.abs(event.deltaY) < Math.abs(event.deltaX)) return;
+
+        if (isAnimating) {
+          event.preventDefault();
+          return;
+        }
+
+        activeIndex = getNearestSectionIndex();
+        const direction = event.deltaY > 0 ? 1 : -1;
+        const nextIndex = activeIndex + direction;
+        if (nextIndex < 0 || nextIndex >= sections.length) {
+          isAnimating = false;
+          return;
+        }
+
+        event.preventDefault();
+        scrollToSection(nextIndex);
+      },
+      { passive: false }
+    );
+
+    window.addEventListener(
+      "scroll",
+      () => {
+        if (!isAnimating) {
+          activeIndex = getNearestSectionIndex();
+        }
+      },
+      { passive: true }
+    );
+
+    window.addEventListener("hashchange", () => {
+      activeIndex = getNearestSectionIndex();
+      isAnimating = false;
+    });
+
+    window.addEventListener("resize", () => {
+      activeIndex = getNearestSectionIndex();
+      isAnimating = false;
+    });
+  })();
+</script>
+
+<style is:global>
+  html.home-scroll-snap-enabled {
+    scroll-behavior: smooth;
+    scroll-padding-top: 0;
+    scroll-snap-type: y mandatory;
+  }
+
+  @media (max-width: 720px) {
+    html.home-scroll-snap-enabled {
+      scroll-snap-type: none;
+    }
+  }
+</style>
+
+<style>
+  .home-page {
+    min-height: 100svh;
+  }
+</style>

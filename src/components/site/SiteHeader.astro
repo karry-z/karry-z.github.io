@@ -1,0 +1,115 @@
+---
+import type { HeaderConfig, HeaderNavItem, PageKey } from "./siteConfig";
+
+type Props = {
+  header: HeaderConfig;
+  currentPage?: PageKey;
+};
+
+const { header, currentPage } = Astro.props;
+const navItems = Object.entries(header.navItems) as Array<[PageKey, HeaderNavItem]>;
+const languageHref = currentPage ? header.languageSwitch.hrefs[currentPage] : header.languageSwitch.hrefs.home;
+---
+
+<header class="site-header" data-site-header>
+  <div class="site-header__inner">
+    <a class="site-header__brand" href={header.brand.href} aria-label={header.brand.ariaLabel}>
+      {header.brand.label}
+    </a>
+
+    <nav class="site-header__nav" aria-label={header.navAriaLabel}>
+      {navItems.map(([pageKey, item]) => (
+        <a class:list={["site-header__link", pageKey === currentPage && "is-active"]} href={item.href} aria-current={pageKey === currentPage ? "page" : undefined}>
+          {item.label}
+        </a>
+      ))}
+      <a class="site-header__link site-header__link--language" href={languageHref} aria-label={header.languageSwitch.ariaLabel}>
+        {header.languageSwitch.label}
+      </a>
+    </nav>
+  </div>
+</header>
+
+<style>
+  :global(:root) {
+    --site-header-height: 72px;
+  }
+
+  .site-header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 50;
+    min-height: var(--site-header-height);
+    border-bottom: 1px solid rgba(229, 231, 235, 0.9);
+    background: rgba(255, 255, 255, 0.94);
+    backdrop-filter: blur(14px);
+  }
+
+  .site-header__inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: min(100% - 2rem, var(--max-width, 1160px));
+    min-height: var(--site-header-height);
+    margin: 0 auto;
+    gap: 1rem;
+  }
+
+  .site-header__brand {
+    color: var(--text, #111827);
+    font-weight: 750;
+    text-decoration: none;
+    white-space: nowrap;
+  }
+
+  .site-header__nav {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    flex-wrap: wrap;
+    gap: 0.25rem;
+  }
+
+  .site-header__link {
+    border-radius: 999px;
+    color: var(--muted, #6b7280);
+    padding: 0.42rem 0.75rem;
+    text-decoration: none;
+  }
+
+  .site-header__link:hover,
+  .site-header__link:focus-visible,
+  .site-header__link.is-active {
+    background: var(--accent-soft, #eff6ff);
+    color: var(--accent-dark, #1d4ed8);
+  }
+
+  .site-header__link--language {
+    border: 1px solid var(--line, #e5e7eb);
+    color: var(--text, #111827);
+  }
+
+  @media (max-width: 640px) {
+    :global(:root) {
+      --site-header-height: 88px;
+    }
+
+    .site-header__inner {
+      align-items: flex-start;
+      flex-direction: column;
+      justify-content: center;
+      gap: 0.35rem;
+      padding: 0.55rem 0;
+    }
+
+    .site-header__nav {
+      justify-content: flex-start;
+    }
+
+    .site-header__link {
+      padding: 0.32rem 0.58rem;
+    }
+  }
+</style>

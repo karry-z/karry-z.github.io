@@ -1,0 +1,34 @@
+---
+import type { Locale } from "../../i18n";
+import { getProjects } from "../../content";
+import SiteLayout from "../site/SiteLayout.astro";
+import { getSiteConfig } from "../site/siteConfig";
+import { getProjectsConfig } from "./projectsConfig";
+import ProjectsExplorer from "./ProjectsExplorer.astro";
+
+type Props = {
+  locale: Locale;
+  pathname: string;
+};
+
+const { locale, pathname } = Astro.props;
+const siteConfig = getSiteConfig(locale);
+const controls = getProjectsConfig(locale);
+const title = `${siteConfig.header.navItems.projects.label} | ${siteConfig.header.brand.label}`;
+const description = locale === "zh" ? `${siteConfig.header.brand.label} 项目。` : `${siteConfig.header.brand.label} projects.`;
+const projects = getProjects(locale).map((project) => ({
+  title: project.title,
+  categories: project.categories,
+  year: Number(project.date),
+  description: project.description,
+  venue: project.venue,
+  imagePath: project.imagePath,
+  imageAlt: project.title,
+  keywords: project.keywords,
+  href: project.projectPageLink
+}));
+---
+
+<SiteLayout title={title} description={description} locale={locale} pageKey="projects" pathname={pathname}>
+  <ProjectsExplorer controls={controls} projects={projects} />
+</SiteLayout>

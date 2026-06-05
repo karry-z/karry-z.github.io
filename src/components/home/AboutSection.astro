@@ -1,0 +1,69 @@
+---
+import type { AboutContent } from "../../content";
+
+type Props = {
+  about: AboutContent;
+};
+
+const { about } = Astro.props;
+---
+
+<div class="about-section">
+  <div class="about-section__copy">
+    <h1>{about.name}</h1>
+    <p class="about-section__research">{about.researchInterests.join(" · ")}</p>
+    <div class="about-section__description" set:html={about.description} />
+  </div>
+
+  <figure class="about-section__portrait">
+    <img src={about.avatarPath} alt={about.name} loading="eager" />
+  </figure>
+</div>
+
+<style>
+  .about-section {
+    display: grid;
+    grid-template-columns: minmax(0, 1.45fr) minmax(240px, 0.55fr);
+    align-items: center;
+    gap: 3rem;
+  }
+
+  .about-section__copy {
+    max-width: 760px;
+  }
+
+  .about-section__research {
+    color: var(--accent-dark, #1d4ed8);
+    font-size: 1.22rem;
+    font-weight: 750;
+  }
+
+  .about-section__description {
+    font-size: 1.05rem;
+  }
+
+  .about-section__portrait {
+    margin: 0;
+  }
+
+  .about-section__portrait img {
+    width: 100%;
+    aspect-ratio: 1;
+    border: 1px solid var(--line, #e5e7eb);
+    border-radius: 8px;
+    object-fit: cover;
+    object-position: center bottom;
+    box-shadow: var(--shadow-card, 0 10px 30px rgba(15, 23, 42, 0.06));
+  }
+
+  @media (max-width: 760px) {
+    .about-section {
+      grid-template-columns: 1fr;
+      gap: 1.5rem;
+    }
+
+    .about-section__portrait {
+      max-width: 280px;
+    }
+  }
+</style>

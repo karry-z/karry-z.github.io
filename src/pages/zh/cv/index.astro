@@ -1,21 +1,5 @@
 ---
-import CTAButton from "../../../components/CTAButton.astro";
-import PDFPreview from "../../../components/PDFPreview.astro";
-import Layout from "../../../layouts/Layout.astro";
-import { cvPageCopy } from "../../../data/copy";
-import { profile } from "../../../data/profile";
-
-const copy = cvPageCopy.zh;
+import CvPage from "../../../components/cv/CvPage.astro";
 ---
 
-<Layout title={copy.title} description={copy.description} lang="zh" pathname="/zh/cv/">
-  <section class="page-hero">
-    <p class="eyebrow">{copy.hero.eyebrow}</p>
-    <h1>{copy.hero.title}</h1>
-    <p>{copy.hero.body}</p>
-    <div class="button-row">
-      <CTAButton href={profile.cv.en} label={copy.downloadLabel} variant="primary" download />
-    </div>
-  </section>
-  <PDFPreview src={profile.cv.en} title={copy.previewTitle} fallback={copy.previewFallback} />
-</Layout>
+<CvPage locale="zh" pathname="/zh/cv/" />

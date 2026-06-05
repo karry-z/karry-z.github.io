@@ -1,19 +1,5 @@
 ---
-import WorkList from "../../components/WorkList.astro";
-import Layout from "../../layouts/Layout.astro";
-import { projectsPageCopy } from "../../data/copy";
-import { works } from "../../data/works";
-
-const copy = projectsPageCopy.en;
+import ProjectsPage from "../../components/projects/ProjectsPage.astro";
 ---
 
-<Layout title={copy.title} description={copy.description} lang="en" pathname="/projects/">
-  <section class="page-hero">
-    <p class="eyebrow">{copy.hero.eyebrow}</p>
-    <h1>{copy.hero.title}</h1>
-    <p>{copy.hero.body}</p>
-  </section>
-  <section class="section section--compact">
-    <WorkList lang="en" works={works} />
-  </section>
-</Layout>
+<ProjectsPage locale="en" pathname="/projects/" />

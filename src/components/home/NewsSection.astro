@@ -1,0 +1,60 @@
+---
+import type { NewsItem } from "../../content";
+
+type Props = {
+  title: string;
+  items: NewsItem[];
+};
+
+const { title, items } = Astro.props;
+---
+
+<div class="news-section">
+  <h2>{title}</h2>
+  <ul class="news-section__list">
+    {items.map((item) => (
+      <li>
+        <time>{item.date}</time>
+        {item.link ? (
+          <a href={item.link} target="_blank" rel="noopener noreferrer" set:html={item.item} />
+        ) : (
+          <span set:html={item.item} />
+        )}
+      </li>
+    ))}
+  </ul>
+</div>
+
+<style>
+  .news-section {
+    max-width: 860px;
+  }
+
+  .news-section__list {
+    display: grid;
+    gap: 1rem;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .news-section__list li {
+    display: grid;
+    grid-template-columns: minmax(120px, 0.22fr) minmax(0, 1fr);
+    gap: 1rem;
+    border-bottom: 1px solid var(--line, #e5e7eb);
+    padding: 0 0 1rem;
+  }
+
+  .news-section__list time {
+    color: var(--muted, #6b7280);
+    font-weight: 700;
+  }
+
+  @media (max-width: 640px) {
+    .news-section__list li {
+      grid-template-columns: 1fr;
+      gap: 0.25rem;
+    }
+  }
+</style>

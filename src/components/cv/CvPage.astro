@@ -1,0 +1,27 @@
+---
+import type { Locale } from "../../i18n";
+import { getCvContent } from "../../content";
+import SiteLayout from "../site/SiteLayout.astro";
+import { getSiteConfig } from "../site/siteConfig";
+import { getCvConfig } from "./cvConfig";
+import CvPdfViewer from "./CvPdfViewer.astro";
+
+type Props = {
+  locale: Locale;
+  pathname: string;
+};
+
+const { locale, pathname } = Astro.props;
+const siteConfig = getSiteConfig(locale);
+const cvContent = getCvContent(locale);
+const cvConfig = getCvConfig(locale);
+const title = `${siteConfig.header.navItems.cv.label} | ${siteConfig.header.brand.label}`;
+---
+
+<SiteLayout title={title} description={cvConfig.description} locale={locale} pageKey="cv" pathname={pathname}>
+  <CvPdfViewer
+    pdfPath={cvContent.pdfPath}
+    title={cvConfig.pdf.previewTitle}
+    fallbackText={cvConfig.pdf.fallbackText}
+  />
+</SiteLayout>

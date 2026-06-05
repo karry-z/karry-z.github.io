@@ -1,0 +1,66 @@
+---
+import type { SiteConfig } from "./siteConfig";
+
+type Props = {
+  footer: SiteConfig["footer"];
+  isHome?: boolean;
+};
+
+const { footer, isHome = false } = Astro.props;
+---
+
+<footer class:list={["site-footer", isHome && "site-footer--home"]} data-site-footer>
+  <div class="site-footer__inner">
+    <p>{footer.copyright}</p>
+    <p>{footer.updatedLabel}</p>
+  </div>
+</footer>
+
+<style>
+  .site-footer {
+    border-top: 1px solid var(--line, #e5e7eb);
+    background: #ffffff;
+    color: var(--muted, #6b7280);
+  }
+
+  .site-footer--home {
+    scroll-snap-align: end;
+  }
+
+  .site-footer__inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: min(100% - 2rem, var(--max-width, 1160px));
+    margin: 0 auto;
+    gap: 1rem;
+    padding: 1rem 0;
+    font-size: 0.9rem;
+  }
+
+  .site-footer--home .site-footer__inner {
+    padding-bottom: 4.5rem;
+  }
+
+  .site-footer p {
+    margin: 0;
+  }
+
+  @media (max-width: 720px) {
+    .site-footer--home {
+      scroll-snap-align: none;
+    }
+
+    .site-footer--home .site-footer__inner {
+      padding-bottom: 1rem;
+    }
+  }
+
+  @media (max-width: 640px) {
+    .site-footer__inner {
+      align-items: flex-start;
+      flex-direction: column;
+      gap: 0.2rem;
+    }
+  }
+</style>

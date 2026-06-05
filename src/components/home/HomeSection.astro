@@ -1,0 +1,41 @@
+---
+import type { HexColor } from "./homeConfig";
+
+type Props = {
+  id: string;
+  label: string;
+  background: HexColor;
+};
+
+const { id, label, background } = Astro.props;
+---
+
+<section id={id} class="home-section" data-home-section={id} aria-label={label} style={`--home-section-bg: ${background};`}>
+  <div class="home-section__inner">
+    <slot />
+  </div>
+</section>
+
+<style>
+  .home-section {
+    display: flex;
+    align-items: center;
+    min-height: 100svh;
+    padding: calc(var(--site-header-height, 72px) + 2rem) 0 5.5rem;
+    scroll-snap-align: start;
+    background: var(--home-section-bg);
+  }
+
+  .home-section__inner {
+    width: min(100% - 2rem, var(--max-width, 1160px));
+    margin: 0 auto;
+  }
+
+  @media (max-width: 720px) {
+    .home-section {
+      min-height: auto;
+      padding: calc(var(--site-header-height, 88px) + 2rem) 0 3rem;
+      scroll-snap-align: none;
+    }
+  }
+</style>

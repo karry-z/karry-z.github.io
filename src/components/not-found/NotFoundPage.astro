@@ -1,0 +1,67 @@
+---
+import type { Locale } from "../../i18n";
+import SiteLayout from "../site/SiteLayout.astro";
+import { getNotFoundConfig } from "./notFoundConfig";
+
+type Props = {
+  locale: Locale;
+  pathname: string;
+};
+
+const { locale, pathname } = Astro.props;
+const config = getNotFoundConfig(locale);
+const alternateHomeHref = locale === "en" ? "/zh/" : "/";
+---
+
+<SiteLayout title={config.title} description={config.description} locale={locale} pathname={pathname}>
+  <section class="not-found">
+    <p class="not-found__code">404</p>
+    <h1>{config.heading}</h1>
+    <p>{config.body}</p>
+    <div class="not-found__links">
+      <a href={locale === "en" ? "/" : "/zh/"}>{config.homeLabel}</a>
+      <a href={alternateHomeHref}>{config.alternateHomeLabel}</a>
+    </div>
+  </section>
+</SiteLayout>
+
+<style>
+  .not-found {
+    width: min(100% - 2rem, 720px);
+    margin: 0 auto;
+    padding: 7rem 0;
+  }
+
+  .not-found__code {
+    margin-bottom: 0.6rem;
+    color: var(--accent-dark, #1d4ed8);
+    font-size: 0.8rem;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+  }
+
+  .not-found__links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    margin-top: 1.5rem;
+  }
+
+  .not-found__links a {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 2.5rem;
+    border: 1px solid var(--line, #e5e7eb);
+    border-radius: 999px;
+    padding: 0.4rem 0.9rem;
+    color: var(--text, #111827);
+    text-decoration: none;
+  }
+
+  .not-found__links a:first-child {
+    border-color: var(--accent, #2563eb);
+    background: var(--accent, #2563eb);
+    color: #ffffff;
+  }
+</style>
