@@ -2,6 +2,18 @@ import type { CvContent, HomeContent, Project } from "./contentTypes";
 
 export const projectsEn = [
   {
+    id: "ai-image-training-audit",
+    categories: ["multimodal-learning", "evaluation"],
+    imagePath: "/images/projects/ai-image-training-audit.png",
+    venue: "Mathematics in Industry Reports (MIIR)",
+    title: "Detecting inappropriate material used to train AI image generation models",
+    description:
+      "A model-auditing report on detecting whether diffusion models were fine-tuned on inappropriate material without generating identifiable harmful images.",
+    keywords: ["diffusion models", "model auditing", "image forensics"],
+    projectPageLink: "https://client.prod.orp.cambridge.org/engage/miir/article-details/691ca388ef936fb4a235bcbe",
+    date: "2026"
+  },
+  {
     id: "vasae",
     categories: ["interpretability"],
     imagePath: "/images/projects/vasae.svg",
